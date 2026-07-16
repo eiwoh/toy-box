@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Oscar's Toy Box</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧸</text></svg>">
+</head>
+<body>
+
+<!-- floating background blobs -->
+<div class="sky" aria-hidden="true">
+  <span class="cloud c1">☁️</span>
+  <span class="cloud c2">☁️</span>
+  <span class="cloud c3">⭐</span>
+  <span class="cloud c4">🌈</span>
+  <span class="cloud c5">☁️</span>
+</div>
+
+<!-- ============ MENU ============ -->
+<section id="menu" class="screen active">
+  <h1 class="title"><span>O</span><span>s</span><span>c</span><span>a</span><span>r</span><span>'</span><span>s</span>&nbsp;<span>T</span><span>o</span><span>y</span>&nbsp;<span>B</span><span>o</span><span>x</span></h1>
+  <div class="mode-grid">
+    <button class="mode-btn peekaboo" data-mode="peekaboo">
+      <span class="mode-emoji">🙈</span>
+      <span class="mode-name">Peekaboo!</span>
+    </button>
+    <button class="mode-btn balloons" data-mode="balloons">
+      <span class="mode-emoji">🎈</span>
+      <span class="mode-name">Balloon Pop</span>
+    </button>
+    <button class="mode-btn doors" data-mode="doors">
+      <span class="mode-emoji">🚪</span>
+      <span class="mode-name">Little Doors</span>
+    </button>
+    <button class="mode-btn magic" data-mode="magic">
+      <span class="mode-emoji">✨</span>
+      <span class="mode-name">Magic Taps</span>
+    </button>
+  </div>
+</section>
+
+<!-- ============ PEEKABOO ============ -->
+<section id="peekaboo" class="screen">
+  <div class="card-grid" id="peekaboo-grid"></div>
+</section>
+
+<!-- ============ BALLOONS ============ -->
+<section id="balloons" class="screen">
+  <div id="balloon-field"></div>
+</section>
+
+<!-- ============ DOORS ============ -->
+<section id="doors" class="screen">
+  <div class="door-row" id="door-row"></div>
+</section>
+
+<!-- ============ MAGIC TAPS ============ -->
+<section id="magic" class="screen">
+  <div id="magic-canvas"></div>
+  <p class="magic-hint">Tap anywhere! ✨</p>
+</section>
+
+<!-- home button (small, corner — for grown-up fingers) -->
+<button id="home-btn" title="Back to menu" hidden>🏠</button>
+
+<!-- confetti layer -->
+<div id="fx-layer" aria-hidden="true"></div>
+
+<script src="game.js"></script>
+</body>
+</html>
