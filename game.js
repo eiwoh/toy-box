@@ -180,6 +180,7 @@ function show(id) {
   if (id === 'doors') buildDoors();
   if (id === 'colors') buildColors();
   if (id === 'rain') startRain();
+  if (id === 'moles') startMoles();
 }
 
 document.querySelectorAll('.mode-btn').forEach((btn) => {
@@ -396,6 +397,56 @@ function startRain() {
   rainField.innerHTML = '';
   for (let i = 0; i < 4; i++) setTimeout(spawnDrop, i * 400);
   balloonTimer = setInterval(spawnDrop, 800);
+}
+
+/* ======================================================
+   WHACK-A-MOLE — critters pop from holes, tap to bonk
+   ====================================================== */
+const moleGrid = document.getElementById('mole-grid');
+// friendly critters that peek out of the holes
+const MOLE_CRITTERS = ['🐹', '🐹', '🐰', '🐭', '🦔', '🐸', '🐱'];
+const MOLE_HOLES = 9;
+
+function buildMoles() {
+  moleGrid.innerHTML = '';
+  for (let i = 0; i < MOLE_HOLES; i++) {
+    const hole = document.createElement('div');
+    hole.className = 'mole-hole';
+    hole.innerHTML = `
+      <button class="mole" aria-label="critter"><span class="mole-face"></span></button>
+      <div class="mole-dirt"></div>`;
+    const mole = hole.querySelector('.mole');
+    mole.addEventListener('click', () => {
+      if (!hole.classList.contains('up') || mole.classList.contains('bonked')) return;
+      mole.classList.add('bonked');
+      hole.classList.remove('up');
+      popSound();
+      const r = mole.getBoundingClientRect();
+      emojiBurst(r.left + r.width / 2, r.top + r.height / 2, '⭐', 5);
+      confettiBurst(r.left + r.width / 2, r.top + r.height / 2, 14);
+    });
+    moleGrid.appendChild(hole);
+  }
+}
+
+function popMole() {
+  if (activeMode !== 'moles' || document.hidden) return;
+  const holes = [...moleGrid.querySelectorAll('.mole-hole')];
+  const down = holes.filter((h) => !h.classList.contains('up'));
+  if (!down.length) return;
+  const hole = pick(down);
+  const mole = hole.querySelector('.mole');
+  mole.classList.remove('bonked');
+  mole.querySelector('.mole-face').textContent = pick(MOLE_CRITTERS);
+  hole.classList.add('up');
+  // duck back down on its own if nobody bonks it
+  setTimeout(() => hole.classList.remove('up'), rand(1400, 2600));
+}
+
+function startMoles() {
+  buildMoles();
+  for (let i = 0; i < 2; i++) setTimeout(popMole, i * 500);
+  balloonTimer = setInterval(popMole, 900);
 }
 
 /* ======================================================

@@ -27,6 +27,8 @@ Then open **http://localhost:4321** — on an iPad/phone on the same wifi, use
 - **🌧️ Rain Catcher** — raindrops (and the odd apple, star, or ladybug) tumble
   down from the sky toward a friendly basket; tap them to catch them with a
   watery splash before they land.
+- **🐹 Whack-a-Mole** — friendly critters pop up out of a grid of holes; tap one
+  to bonk it before it ducks back down, with a pop and a burst of stars.
 
 The small 🏠 button (top-left) goes back to the menu — kept small on purpose
 so little fingers don't hit it by accident.
