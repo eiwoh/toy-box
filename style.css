@@ -101,6 +101,7 @@ body {
 .mode-btn.doors    { background: var(--candy-yellow); }
 .mode-btn.magic    { background: var(--candy-purple); }
 .mode-btn.colors   { background: var(--candy-mint); }
+.mode-btn.rain     { background: #6fb0e6; }
 .mode-emoji { font-size: clamp(3rem, 9vw, 5rem); }
 .mode-name {
   font-size: clamp(1.2rem, 3.5vw, 1.8rem);
@@ -312,6 +313,45 @@ body {
 }
 .color-blob.said { transform: scale(1.06); }
 .color-blob.said .blob-label { opacity: 1; transform: scale(1); }
+
+/* ======================================================
+   RAIN CATCHER — drops fall down, tap to catch
+   ====================================================== */
+#rain {
+  background: linear-gradient(180deg, #9fd4f5 0%, #cdeaff 60%, #eaf7ff 100%);
+}
+#rain-field { position: absolute; inset: 0; overflow: hidden; }
+.drop {
+  position: absolute;
+  top: -120px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: clamp(3.2rem, 11vw, 5.5rem);
+  line-height: 1;
+  padding: 10px;
+  animation: fall-down linear forwards;
+  filter: drop-shadow(0 5px 3px rgba(74, 59, 99, 0.18));
+}
+@keyframes fall-down {
+  from { transform: translateY(0) rotate(var(--sway, 0deg)); }
+  to   { transform: translateY(calc(100vh + 200px)) rotate(calc(var(--sway, 0deg) * -1)); }
+}
+.drop.caught { animation: none; opacity: 0; pointer-events: none; transform: scale(1.4); }
+.rain-bucket {
+  position: absolute;
+  bottom: 2vh;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(4rem, 16vw, 8rem);
+  pointer-events: none;
+  filter: drop-shadow(0 8px 5px rgba(74, 59, 99, 0.22));
+  animation: bucket-bob 2.6s ease-in-out infinite;
+}
+@keyframes bucket-bob {
+  0%, 100% { transform: translateX(-50%) rotate(-3deg); }
+  50%      { transform: translateX(-50%) rotate(3deg); }
+}
 
 /* ======================================================
    MAGIC TAPS

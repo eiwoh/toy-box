@@ -24,6 +24,9 @@ Then open **http://localhost:4321** — on an iPad/phone on the same wifi, use
 - **🌈 Colors** — a grid of big colored blobs. Tap one and it says the color's
   name out loud with matching confetti, then quietly becomes a new color so it
   never runs out.
+- **🌧️ Rain Catcher** — raindrops (and the odd apple, star, or ladybug) tumble
+  down from the sky toward a friendly basket; tap them to catch them with a
+  watery splash before they land.
 
 The small 🏠 button (top-left) goes back to the menu — kept small on purpose
 so little fingers don't hit it by accident.

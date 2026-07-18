@@ -102,6 +102,22 @@ function creakSound() {
   osc.stop(ac.currentTime + 0.4);
 }
 
+function splashSound() {
+  // a soft watery "plip" — quick downward blip plus a high sparkle
+  const ac = ctx();
+  const osc = ac.createOscillator();
+  const gain = ac.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(900, ac.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(300, ac.currentTime + 0.14);
+  gain.gain.setValueAtTime(0.22, ac.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.18);
+  osc.connect(gain).connect(ac.destination);
+  osc.start();
+  osc.stop(ac.currentTime + 0.18);
+  tone(rand(1500, 2100), 0.12, 'sine', 0.06, 0.02);
+}
+
 function say(text) {
   if (!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
@@ -163,6 +179,7 @@ function show(id) {
   if (id === 'balloons') startBalloons();
   if (id === 'doors') buildDoors();
   if (id === 'colors') buildColors();
+  if (id === 'rain') startRain();
 }
 
 document.querySelectorAll('.mode-btn').forEach((btn) => {
@@ -338,6 +355,47 @@ function buildColors() {
     });
     blobGrid.appendChild(blob);
   });
+}
+
+/* ======================================================
+   RAIN CATCHER — drops fall from the sky, tap to catch
+   ====================================================== */
+const rainField = document.getElementById('rain-field');
+// mostly raindrops, with the occasional treat tumbling down for a surprise
+const RAIN_EMOJIS = ['💧', '💧', '💧', '💦', '⭐', '🍎', '🍓', '🌸', '🐞', '🍋'];
+
+function spawnDrop() {
+  if (activeMode !== 'rain') return;
+  // don't pile up drops while the tab is hidden or the sky is already full
+  if (document.hidden || rainField.childElementCount >= 12) return;
+  const d = document.createElement('button');
+  d.className = 'drop';
+  d.textContent = pick(RAIN_EMOJIS);
+  d.style.left = rand(3, 84) + 'vw';
+  d.style.setProperty('--sway', rand(-10, 10) + 'deg');
+  const fallSecs = rand(4, 7);
+  d.style.animationDuration = fallSecs + 's';
+  // fallback cleanup in case animationend never fires (e.g. throttled tab)
+  setTimeout(() => d.remove(), (fallSecs + 3) * 1000);
+
+  d.addEventListener('click', () => {
+    if (d.classList.contains('caught')) return;
+    const r = d.getBoundingClientRect();
+    d.classList.add('caught');
+    splashSound();
+    emojiBurst(r.left + r.width / 2, r.top + r.height / 2, '💦', 5);
+    confettiBurst(r.left + r.width / 2, r.top + r.height / 2, 10, '#7fc4ff');
+    setTimeout(() => d.remove(), 120);
+  });
+
+  d.addEventListener('animationend', () => d.remove());
+  rainField.appendChild(d);
+}
+
+function startRain() {
+  rainField.innerHTML = '';
+  for (let i = 0; i < 4; i++) setTimeout(spawnDrop, i * 400);
+  balloonTimer = setInterval(spawnDrop, 800);
 }
 
 /* ======================================================
