@@ -23,6 +23,18 @@ const ANIMALS = [
   { emoji: '🐢', name: 'Turtle' },
 ];
 
+// big, clearly-distinct colors for the colour-naming game
+const COLORS = [
+  { name: 'Red',    hex: '#ff5a5a' },
+  { name: 'Orange', hex: '#ffab5e' },
+  { name: 'Yellow', hex: '#ffd83d' },
+  { name: 'Green',  hex: '#63cf6b' },
+  { name: 'Blue',   hex: '#5aa9ff' },
+  { name: 'Purple', hex: '#b483ff' },
+  { name: 'Pink',   hex: '#ff8fc6' },
+  { name: 'Brown',  hex: '#b07a4f' },
+];
+
 const CONFETTI_COLORS = ['#ff8fb8', '#ffd45e', '#7be0c3', '#7fc4ff', '#c3a4ff', '#ffab6b'];
 const MAGIC_EMOJIS = ['⭐', '🌟', '✨', '🌙', '💫', '🪐', '🌈', '❤️', '💛', '💚', '💙', '💜'];
 
@@ -102,13 +114,13 @@ function say(text) {
 // ---------- confetti ----------
 const fxLayer = document.getElementById('fx-layer');
 
-function confettiBurst(x, y, count = 18) {
+function confettiBurst(x, y, count = 18, color = null) {
   for (let i = 0; i < count; i++) {
     const piece = document.createElement('div');
     piece.className = 'confetti';
     piece.style.left = x + 'px';
     piece.style.top = y + 'px';
-    piece.style.background = pick(CONFETTI_COLORS);
+    piece.style.background = color || pick(CONFETTI_COLORS);
     piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '3px';
     piece.style.setProperty('--cx', rand(-160, 160) + 'px');
     piece.style.setProperty('--cy', rand(60, 340) + 'px');
@@ -150,6 +162,7 @@ function show(id) {
   if (id === 'peekaboo') buildPeekaboo();
   if (id === 'balloons') startBalloons();
   if (id === 'doors') buildDoors();
+  if (id === 'colors') buildColors();
 }
 
 document.querySelectorAll('.mode-btn').forEach((btn) => {
@@ -285,6 +298,45 @@ function buildDoors() {
       }, 4200);
     });
     doorRow.appendChild(door);
+  });
+}
+
+/* ======================================================
+   COLORS — tap a blob, it says its colour out loud
+   ====================================================== */
+const blobGrid = document.getElementById('blob-grid');
+
+function paintBlob(blob, color) {
+  blob.style.setProperty('--blob-color', color.hex);
+  blob.dataset.name = color.name;
+  blob.querySelector('.blob-label').textContent = color.name;
+}
+
+function buildColors() {
+  blobGrid.innerHTML = '';
+  shuffle(COLORS).slice(0, 6).forEach((color) => {
+    const blob = document.createElement('button');
+    blob.className = 'color-blob';
+    blob.innerHTML = '<span class="blob-label"></span>';
+    let currentColor = color;
+    paintBlob(blob, currentColor);
+
+    blob.addEventListener('click', () => {
+      if (blob.classList.contains('said')) return;
+      blob.classList.add('said');
+      cheerSound();
+      say(currentColor.name);
+      const r = blob.getBoundingClientRect();
+      confettiBurst(r.left + r.width / 2, r.top + r.height / 2, 16, currentColor.hex);
+
+      // after a moment, become a NEW colour so it never runs out
+      setTimeout(() => {
+        blob.classList.remove('said');
+        currentColor = pick(COLORS);
+        paintBlob(blob, currentColor);
+      }, 2500);
+    });
+    blobGrid.appendChild(blob);
   });
 }
 

@@ -21,6 +21,9 @@ Then open **http://localhost:4321** — on an iPad/phone on the same wifi, use
   their own and hide someone new.
 - **✨ Magic Taps** — a night sky; every tap bursts into stars anywhere on
   screen. Zero rules, maximum delight.
+- **🌈 Colors** — a grid of big colored blobs. Tap one and it says the color's
+  name out loud with matching confetti, then quietly becomes a new color so it
+  never runs out.
 
 The small 🏠 button (top-left) goes back to the menu — kept small on purpose
 so little fingers don't hit it by accident.
