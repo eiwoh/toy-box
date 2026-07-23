@@ -181,6 +181,7 @@ function show(id) {
   if (id === 'colors') buildColors();
   if (id === 'rain') startRain();
   if (id === 'moles') startMoles();
+  if (id === 'draw') startDraw();
 }
 
 document.querySelectorAll('.mode-btn').forEach((btn) => {
@@ -448,6 +449,106 @@ function startMoles() {
   for (let i = 0; i < 2; i++) setTimeout(popMole, i * 500);
   balloonTimer = setInterval(popMole, 900);
 }
+
+/* ======================================================
+   RAINBOW DRAW — drag to paint a thick rainbow trail
+   ====================================================== */
+const drawCanvas = document.getElementById('draw-canvas');
+const drawCtx = drawCanvas.getContext('2d');
+const drawClearBtn = document.getElementById('draw-clear');
+const drawHint = document.querySelector('.draw-hint');
+
+let drawHue = 0;
+let drawing = false;
+let drawLastX = 0;
+let drawLastY = 0;
+let drawSoundReady = true;
+
+function sizeDrawCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  drawCanvas.width = Math.round(window.innerWidth * dpr);
+  drawCanvas.height = Math.round(window.innerHeight * dpr);
+  drawCanvas.style.width = window.innerWidth + 'px';
+  drawCanvas.style.height = window.innerHeight + 'px';
+  drawCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawCtx.lineCap = 'round';
+  drawCtx.lineJoin = 'round';
+}
+
+function clearDraw() {
+  drawCtx.save();
+  drawCtx.setTransform(1, 0, 0, 1, 0, 0);
+  drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
+  drawCtx.restore();
+}
+
+// a soft, pitch-shifting note while the crayon moves (throttled so it purrs, not screeches)
+function drawTone(hue) {
+  if (!drawSoundReady) return;
+  drawSoundReady = false;
+  tone(300 + (hue / 360) * 900, 0.12, 'sine', 0.05);
+  setTimeout(() => { drawSoundReady = true; }, 90);
+}
+
+function drawDot(x, y) {
+  drawHue = (drawHue + 12) % 360;
+  drawCtx.fillStyle = `hsl(${drawHue}, 90%, 60%)`;
+  drawCtx.beginPath();
+  drawCtx.arc(x, y, 12, 0, Math.PI * 2);
+  drawCtx.fill();
+}
+
+function drawStart(x, y) {
+  drawing = true;
+  drawLastX = x;
+  drawLastY = y;
+  drawDot(x, y); // a lone tap still leaves a blob
+  drawTone(drawHue);
+  if (drawHint) drawHint.classList.add('gone');
+}
+
+function drawMove(x, y) {
+  if (!drawing) return;
+  drawHue = (drawHue + 6) % 360;
+  drawCtx.strokeStyle = `hsl(${drawHue}, 90%, 60%)`;
+  drawCtx.lineWidth = 22;
+  drawCtx.beginPath();
+  drawCtx.moveTo(drawLastX, drawLastY);
+  drawCtx.lineTo(x, y);
+  drawCtx.stroke();
+  drawLastX = x;
+  drawLastY = y;
+  drawTone(drawHue);
+}
+
+function drawEnd() { drawing = false; }
+
+function startDraw() {
+  sizeDrawCanvas();
+  clearDraw();
+  if (drawHint) drawHint.classList.remove('gone');
+}
+
+drawCanvas.addEventListener('pointerdown', (e) => {
+  ctx(); // unlock audio on first touch
+  drawStart(e.clientX, e.clientY);
+});
+drawCanvas.addEventListener('pointermove', (e) => drawMove(e.clientX, e.clientY));
+window.addEventListener('pointerup', drawEnd);
+window.addEventListener('pointercancel', drawEnd);
+
+// keep the canvas matched to the window (e.g. rotation) — only while this mode is showing
+window.addEventListener('resize', () => {
+  if (activeMode !== 'draw' || drawing) return;
+  sizeDrawCanvas();
+  clearDraw();
+});
+
+drawClearBtn.addEventListener('click', () => {
+  clearDraw();
+  sparkleSound();
+  if (drawHint) drawHint.classList.remove('gone');
+});
 
 /* ======================================================
    MAGIC TAPS — tap anywhere, stars burst out

@@ -53,6 +53,10 @@
       <span class="mode-emoji">🐹</span>
       <span class="mode-name">Whack-a-Mole</span>
     </button>
+    <button class="mode-btn draw" data-mode="draw">
+      <span class="mode-emoji">🎨</span>
+      <span class="mode-name">Rainbow Draw</span>
+    </button>
   </div>
 </section>
 
@@ -85,6 +89,13 @@
 <!-- ============ WHACK-A-MOLE ============ -->
 <section id="moles" class="screen">
   <div class="mole-grid" id="mole-grid"></div>
+</section>
+
+<!-- ============ RAINBOW DRAW ============ -->
+<section id="draw" class="screen">
+  <canvas id="draw-canvas"></canvas>
+  <button id="draw-clear" title="Clear the drawing">🧽</button>
+  <p class="draw-hint">Drag to draw a rainbow! 🌈</p>
 </section>
 
 <!-- ============ MAGIC TAPS ============ -->
